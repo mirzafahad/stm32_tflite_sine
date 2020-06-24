@@ -7,7 +7,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-
+#include "stm32746g_discovery.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -15,6 +15,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 static void system_clock_config(void);
+static void cpu_cache_enable(void);
+static void error_handler(void);
 static void MX_USART1_UART_Init(void);
 
 
@@ -31,6 +33,9 @@ int main(void)
 
     // Configure the system clock
     system_clock_config();
+
+    // Configure on-board green LED
+    BSP_LED_Init(LED_GREEN);
 
     /* Initialize all configured peripherals */
     MX_USART1_UART_Init();
@@ -117,14 +122,28 @@ static void MX_USART1_UART_Init(void)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
-void Error_Handler(void)
+static void error_handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+    // Turn Green LED ON
+    BSP_LED_On(LED_GREEN);
+    while(1);
+}
 
-  /* USER CODE END Error_Handler_Debug */
+/**
+  * @brief  CPU L1-Cache enable.
+  * @param  None
+  * @retval None
+  */
+static void cpu_cache_enable(void)
+{
+    // Enable I-Cache
+    SCB_EnableICache();
+
+    // Enable D-Cache
+    SCB_EnableDCache();
 }
 
 #ifdef  USE_FULL_ASSERT
