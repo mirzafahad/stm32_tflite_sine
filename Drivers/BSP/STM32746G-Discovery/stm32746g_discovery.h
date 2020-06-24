@@ -193,6 +193,8 @@ typedef enum
  * @brief Definition for COM port1, connected to USART1
  */ 
 #define DISCOVERY_COM1                          USART1
+#define DISCOVERY_COM1_FORCE_RESET()            __HAL_RCC_USART1_FORCE_RESET()
+#define DISCOVERY_COM1_RELEASE_RESET()          __HAL_RCC_USART1_RELEASE_RESET()
 #define DISCOVERY_COM1_CLK_ENABLE()             __HAL_RCC_USART1_CLK_ENABLE()
 #define DISCOVERY_COM1_CLK_DISABLE()            __HAL_RCC_USART1_CLK_DISABLE()
 

@@ -37,7 +37,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
   DISCOVERY_COM1_TX_GPIO_CLK_ENABLE();
   DISCOVERY_COM1_RX_GPIO_CLK_ENABLE();
 
-
   /* Enable USARTx clock */
   DISCOVERY_COM1_CLK_ENABLE();
   
@@ -69,8 +68,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
 {
   /*##-1- Reset peripherals ##################################################*/
-//  USARTx_FORCE_RESET();
-//  USARTx_RELEASE_RESET();
+  DISCOVERY_COM1_FORCE_RESET();
+  DISCOVERY_COM1_RELEASE_RESET();
 
   /*##-2- Disable peripherals and GPIO Clocks #################################*/
   /* Configure USART6 Tx as alternate function  */
