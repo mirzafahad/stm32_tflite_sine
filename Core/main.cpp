@@ -33,8 +33,19 @@ constexpr uint32_t kTensorArenaSize = 2 * 1024;
 uint8_t tensor_arena[kTensorArenaSize];
 }// namespace
 
+
+// This constant determines the number of inferences to perform across the range
+// of x values defined above. Since each inference takes time, the higher this
+// number, the more time it will take to run through the entire range. The value
+// of this constant can be tuned so that one full cycle takes a desired amount
+// of time. Since different devices take different amounts of time to perform
+// inference, this value should be defined per-device.
+// A larger number than the default to make the animation smoother
+const uint16_t INFERENCE_PER_CYCLE = 70;
+
 // UART handler declaration
 UART_HandleTypeDef DebugUartHandler;
+
 
 /* Private function prototypes -----------------------------------------------*/
 static void system_clock_config(void);
@@ -44,7 +55,6 @@ static void uart1_init(void);
 
 
 /* Private user code ---------------------------------------------------------*/
-
 /**
   * @brief  The application entry point.
   * @retval int
@@ -101,6 +111,10 @@ int main(void)
   	input = interpreter->input(0);
   	output = interpreter->output(0);
 
+    // We are dividing the whole input range with the number of inference
+    // per cycle we want to show to get the unit value. We will then multiply
+    // the unit value with the current position of the inference
+    float unitValuePerDevision = INPUT_RANGE / static_cast<float>(INFERENCE_PER_CYCLE);
  
     while (1)
     {
