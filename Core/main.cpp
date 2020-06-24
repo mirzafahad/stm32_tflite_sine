@@ -118,6 +118,25 @@ int main(void)
  
     while (1)
     {
+	    // Calculate an x value to feed into the model
+        for(uint16_t inferenceCount = 0; inferenceCount <= INFERENCE_PER_CYCLE; inferenceCount++)
+        {
+	        float x_val = static_cast<float>(inferenceCount) * unitValuePerDevision;
+
+	        // Place our calculated x value in the model's input tensor
+	        input->data.f[0] = x_val;
+
+	        // Run inference, and report any error
+	        TfLiteStatus invoke_status = interpreter->Invoke();
+	        if (invoke_status != kTfLiteOk)
+	        {
+	            TF_LITE_REPORT_ERROR(error_reporter, "Invoke failed on x_val: %f\n", static_cast<float>(x_val));
+	            return 0;
+	        }
+
+	        // Read the predicted y value from the model's output tensor
+	        float y_val = output->data.f[0];
+        }
     }
 
 }
