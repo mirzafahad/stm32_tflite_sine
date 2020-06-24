@@ -13,11 +13,14 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+// UART handler declaration
+UART_HandleTypeDef DebugUartHandler;
+
 /* Private function prototypes -----------------------------------------------*/
 static void system_clock_config(void);
 static void cpu_cache_enable(void);
 static void error_handler(void);
-static void MX_USART1_UART_Init(void);
+static void uart1_init(void);
 
 
 /* Private user code ---------------------------------------------------------*/
@@ -37,8 +40,8 @@ int main(void)
     // Configure on-board green LED
     BSP_LED_Init(LED_GREEN);
 
-    /* Initialize all configured peripherals */
-    MX_USART1_UART_Init();
+    // Initialize UART1
+    uart1_init();
 
  
     while (1)
@@ -49,7 +52,23 @@ int main(void)
 
 
 /**
-  * @brief System Clock Configuration
+  * @brief  System Clock Configuration
+  *         The system Clock is configured as follow :
+  *            System Clock source            = PLL (HSE)
+  *            SYSCLK(Hz)                     = 200000000
+  *            HCLK(Hz)                       = 200000000
+  *            AHB Prescaler                  = 1
+  *            APB1 Prescaler                 = 4
+  *            APB2 Prescaler                 = 2
+  *            HSE Frequency(Hz)              = 25000000
+  *            PLL_M                          = 25
+  *            PLL_N                          = 400
+  *            PLL_P                          = 2
+  *            PLL_Q                          = 9
+  *            VDD(V)                         = 3.3
+  *            Main regulator output voltage  = Scale1 mode
+  *            Flash Latency(WS)              = 6
+  * @param  None
   * @retval None
   */
 void system_clock_config(void)
@@ -97,26 +116,39 @@ void system_clock_config(void)
 
 
 /**
-  * @brief USART1 Initialization Function
-  * @param None
+  * @brief  UART1 Initialization Function
+  * @param  None
   * @retval None
   */
-static void MX_USART1_UART_Init(void)
+static void uart1_init(void)
 {
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /*##-1- Configure the UART peripheral ######################################*/
+	/* Put the USART peripheral in the Asynchronous mode (UART Mode)
+	   UART configured as follows:
+	      - Word Length = 8 Bits
+	      - Stop Bit = One Stop bit
+	      - Parity = None
+	      - BaudRate = 9600 baud
+	      - Hardware flow control disabled (RTS and CTS signals)
+	 */
+
+	DebugUartHandler.Instance        = DISCOVERY_COM1;
+	DebugUartHandler.Init.BaudRate   = 9600;
+	DebugUartHandler.Init.WordLength = UART_WORDLENGTH_8B;
+	DebugUartHandler.Init.StopBits   = UART_STOPBITS_1;
+	DebugUartHandler.Init.Parity     = UART_PARITY_NONE;
+	DebugUartHandler.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
+	DebugUartHandler.Init.Mode       = UART_MODE_TX_RX;
+	DebugUartHandler.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+
+	if(HAL_UART_DeInit(&DebugUartHandler) != HAL_OK)
+	{
+		error_handler();
+	}
+	if(HAL_UART_Init(&DebugUartHandler) != HAL_OK)
+	{
+	    error_handler();
+	}
 }
 
 
