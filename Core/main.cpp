@@ -8,6 +8,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32746g_discovery.h"
+#include "lcd.h"
 #include "sine_model.h"
 #include "tensorflow/lite/micro/kernels/all_ops_resolver.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
@@ -76,6 +77,8 @@ int main(void)
     // Initialize UART1
     uart1_init();
 
+    LCD_Init();
+
   	static tflite::MicroErrorReporter micro_error_reporter;
   	error_reporter = &micro_error_reporter;
 
@@ -136,6 +139,10 @@ int main(void)
 
 	        // Read the predicted y value from the model's output tensor
 	        float y_val = output->data.f[0];
+
+	        // Output the results. A custom function can be implemented
+	        // for each supported hardware target.
+	        LCD_Output(error_reporter, x_val, y_val);
         }
     }
 
@@ -183,13 +190,13 @@ void system_clock_config(void)
 
     if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
-        Error_Handler();
+    	error_handler();
     }
 
     // Activate the Over-Drive mode
     if(HAL_PWREx_EnableOverDrive() != HAL_OK)
     {
-        Error_Handler();
+    	error_handler();
     }
 
     // Initializes the CPU, AHB and APB busses clocks
@@ -201,7 +208,7 @@ void system_clock_config(void)
 
     if(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6) != HAL_OK)
     {
-        Error_Handler();
+        error_handler();
     }
 }
 
