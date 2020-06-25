@@ -73,20 +73,18 @@ void LCD_Init(void)
     Midpoint = LcdHeight / 2;
 
     // Calculate fractional pixels per unit of x_value
-    X_increment = static_cast<float>(LcdWidth) / INPUT_RANGE;
+    X_increment = ((float)LcdWidth) / INPUT_RANGE;
 }
 
 /**
   * @brief  LCD Output for the NN inference
-  *         Animates a dot across the screen to represent the current x and y values
-  * @param  None
+  *         Animates a sine wave across the screen to represent the current x and y values
+  * @param  x_value: point to plot across x-axis
+  *         y_value: point to plot across y-axis
   * @retval None
   */
-void LCD_Output(tflite::ErrorReporter* error_reporter, float x_value, float y_value)
+void LCD_Output(float x_value, float y_value)
 {
-    // Log the current X and Y values
-    TF_LITE_REPORT_ERROR(error_reporter, "x_value: %f, y_value: %f\n", x_value, y_value);
-
     if(x_value == 0)
     {
         // Clear the previous drawing, we are starting from the beginning
@@ -95,14 +93,14 @@ void LCD_Output(tflite::ErrorReporter* error_reporter, float x_value, float y_va
 
     // Calculate x position, ensuring the dot is not partially offscreen,
     // which causes artifacts and crashes
-    uint32_t x_pos = (DOT_RADIUS * 2) + static_cast<uint32_t>(x_value * X_increment);
+    uint32_t x_pos = (DOT_RADIUS * 2) + (uint32_t)(x_value * X_increment);
 
     // Calculate y position, ensuring the dot is not partially offscreen
     uint32_t y_pos;
     if(y_value >= 0)
     {
         // Since the display's y runs from the top down, invert y_value
-        y_pos = (DOT_RADIUS * 2) + static_cast<uint32_t>(Midpoint * (1.f - y_value));
+        y_pos = (DOT_RADIUS * 2) + (uint32_t)(Midpoint * (1.f - y_value));
 
         // NOTE: We took off the diameter of the dot from the actual LCD space,
         //       when we calculated LcdHeight. So, add that to the actual y_pos
@@ -111,7 +109,7 @@ void LCD_Output(tflite::ErrorReporter* error_reporter, float x_value, float y_va
     else
     {
         // For any negative y_value, start drawing from the midpoint
-        y_pos = (DOT_RADIUS * 2) + Midpoint + static_cast<uint32_t>(Midpoint * (0.f - y_value));
+        y_pos = (DOT_RADIUS * 2) + Midpoint + (uint32_t)(Midpoint * (0.f - y_value));
 
         // NOTE: We took off the diameter of the dot from the actual LCD space,
         //       when we calculated LcdHeight. So, add that to the actual y_pos
