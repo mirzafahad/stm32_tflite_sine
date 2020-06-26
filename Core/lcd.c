@@ -10,10 +10,15 @@
 #include "lcd.h"
 #include "stm32746g_discovery_lcd.h"
 
+
+/* Extern Variables ---------------------------------------------------------*/
+extern const float INPUT_RANGE; // Defined in main.cpp
+
 /* Private variables ---------------------------------------------------------*/
 // The colors we'll draw
 static const uint32_t BACKGROUND_COLOR = LCD_COLOR_YELLOW;
 static const uint32_t FOREGROUND_COLOR = LCD_COLOR_RED;
+
 // The size of the dot we'll draw
 static const uint8_t DOT_RADIUS = 10;
 
