@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * @file    main.c
-  * @author  Fahad Mirza
+  * @file    main.cpp
+  * @author  Fahad Mirza (fahadmirza8@gmail.com)
   * @brief   This file provides main program functions
   ******************************************************************************
   */
@@ -39,7 +39,7 @@ uint8_t tensor_arena[kTensorArenaSize];
 // which is from 0 to (2 * Pi). We approximate Pi to avoid requiring
 // additional libraries.
 extern const float INPUT_RANGE = 2.f * 3.14159265359f;
-// NOTE: extern is used because lcd.c also uses this.
+// NOTE: extern is used because lcd.c also uses this variable.
 
 // This constant determines the number of inferences to perform across the range
 // of x values defined above. Since each inference takes time, the higher this
@@ -84,6 +84,7 @@ int main(void)
     // Initialize UART1
     uart1_init();
 
+    // Initialize LCD
     LCD_Init();
 
   	static tflite::MicroErrorReporter micro_error_reporter;
@@ -151,7 +152,6 @@ int main(void)
 	        handle_output(error_reporter, x_val, y_val);
         }
     }
-
 }
 
 
@@ -308,5 +308,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
