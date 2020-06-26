@@ -22,6 +22,7 @@ limitations under the License.
 #ifdef __cplusplus
  extern "C" {
 #endif
+
 void DebugLog(const char* s);
 
 #ifdef __cplusplus
